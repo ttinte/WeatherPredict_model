@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import tensorflow as tf
 import numpy as np
 import os
+import joblib
 
 import firebase_admin
 from firebase_admin import credentials, db
@@ -11,11 +12,13 @@ app = Flask(__name__)
 # 1. Load model AI
 model = tf.keras.models.load_model("weather_lstm_model.h5")
 
-# 2. Lấy API KEY từ biến môi trường của Render
+# 2. Load Scaler
+scaler = joblib.load("weather_scaler.pkl")
+
+# 3. Load API KEY From Render Environment Variables
 API_KEY = os.environ.get("MY_API_KEY")
 
-# 3. Khởi tạo kết nối Firebase
-# Đảm bảo bạn đã dán nội dung Service Account vào Secret Files trên Render với tên firebase_key.json
+# 4. Initialize Firebase Admin SDK
 cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://aiotnhom2-default-rtdb.firebaseio.com/'
@@ -29,17 +32,15 @@ def home():
 def predict():
     client_key = request.headers.get("x-api-key")
 
-    # In ra log để dễ debug trên Render
+    # Debug Log:
     print(f"Key server đang có: '{API_KEY}'")
     print(f"Key Postman gửi lên: '{client_key}'")
 
-    # Kiểm tra bảo mật
+    # Check API Key
     if client_key != API_KEY:
         return jsonify({"error": "Unauthorized"}), 401
 
     try:
-        # 1. Trỏ vào thư mục 'readings' và lấy 2 ngày gần nhất
-        # Việc lấy 2 ngày đảm bảo có đủ 10 bản ghi dù vừa mới bước qua ngày mới
         ref = db.reference("weather_stations/Weather_station_1/readings")
         data_dict = ref.order_by_key().limit_to_last(2).get()
 
@@ -48,12 +49,9 @@ def predict():
 
         sequence = []
         
-        # 2. Lặp qua các thư mục Ngày (VD: 2026-04-03, 2026-04-04)
         for date_key in sorted(data_dict.keys()):
             day_data = data_dict[date_key]
             
-            # 3. Lặp qua các mốc Giờ/Timestamp bên trong ngày đó
-            # Sắp xếp theo Timestamp để đảm bảo AI nhận data đúng chiều thời gian
             for time_key in sorted(day_data.keys()):
                 val = day_data[time_key]
                 try:
@@ -64,29 +62,22 @@ def predict():
                     
                     sequence.append([temp, hum, pres, rain])
                 except AttributeError:
-                    # Bỏ qua dòng này nếu cấu trúc dữ liệu bị lỗi
                     continue
 
-        # 4. Kiểm tra xem sau khi gom lại đã đủ 10 bản ghi chưa
         if len(sequence) < 10:
             return jsonify({
                 "error": f"Mới gom được {len(sequence)} bản ghi, cần ít nhất 10 để AI chạy."
             }), 400
 
-        # 5. Cắt lấy đúng 10 bản ghi cuối cùng của mảng (10 mốc thời gian mới nhất)
         last_10_readings = sequence[-10:]
-
-        # 6. Đưa vào Numpy array và reshape cho model LSTM
-        # (1 sample, 10 timesteps, 4 features)
-        x = np.array(last_10_readings).reshape(1, 10, 4)
-
-        # 7. Chạy dự đoán
-        pred = model.predict(x).tolist()
+        scaled_input = scaler.transform(last_10_readings)
+        x = np.array(scaled_input).reshape(1, 10, 4)
+        scaled_pred = model.predict(x)
+        real_pred = scaler.inverse_transform(scaled_pred)
 
         return jsonify({
             "status": "success",
-            "last_10_readings": last_10_readings,
-            "prediction": pred
+            "prediction": real_pred.tolist()
         })
 
     except Exception as e:
