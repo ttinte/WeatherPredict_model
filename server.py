@@ -77,6 +77,9 @@ def predict():
         scaled_pred = model.predict(x)
         real_pred = scaler.inverse_transform(scaled_pred)
 
+
+        final_result = real_pred[0]
+
         if final_result[3] > 0.5:
             final_result[3] = 1.0
         else:
@@ -84,7 +87,7 @@ def predict():
 
         return jsonify({
             "status": "success",
-            "prediction": real_pred.tolist()
+            "prediction": [final_result.tolist()]
         })
 
     except Exception as e:
