@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import tensorflow as tf
 import numpy as np
 import os
@@ -8,6 +9,7 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 app = Flask(__name__)
+CORS(app)
 
 # 1. Load model AI
 model = tf.keras.models.load_model("weather_lstm_model.h5")
@@ -74,6 +76,11 @@ def predict():
         x = np.array(scaled_input).reshape(1, 10, 4)
         scaled_pred = model.predict(x)
         real_pred = scaler.inverse_transform(scaled_pred)
+
+        if final_result[3] > 0.5:
+            final_result[3] = 1.0
+        else:
+            final_result[3] = 0.0
 
         return jsonify({
             "status": "success",
