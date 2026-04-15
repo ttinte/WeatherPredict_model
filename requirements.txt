@@ -2,3 +2,5 @@ flask
 tensorflow
 numpy
 firebase-admin
+joblib
+scikit-learn
