@@ -30,4 +30,3 @@ AIoT-WEATHER-Station/
 │
 ├── .gitignore
 └── README.md
-```
