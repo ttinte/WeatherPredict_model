@@ -1,21 +1,21 @@
 ## 📁 Project Structure
 
 ```text
-AIOT-WEATHER/
+AIoT-WEATHER-Station/
 │
 ├── ai_server/
 │   ├── server.py              # Flask API server
-│   ├── model.h5               # Trained LSTM model (ignored)
-│   ├── scaler.pkl             # Data scaler (ignored)
+│   ├── model.h5               # Trained LSTM model
+│   ├── scaler.pkl             # Data scaler
 │   └── requirements.txt       # Python dependencies
 │
 ├── WeatherPredictTraining/
-│   ├── 01_check_timeseries.py # Data analysis & visualization
-│   ├── train_lstm_model.py    # Train LSTM model
+│   ├── 01_check_timeseries.py # Missing value and outliers detection
+│   ├── train_lstm_model.py    # Train model
 │   ├── weather_fixed_pro.csv  # Dataset
-│   ├── weather_lstm_model.h5  # Trained model (ignored)
-│   ├── weather_scaler.pkl     # Scaler (ignored)
-│   └── Predict_plot.png       # Prediction result (ignored)
+│   ├── weather_lstm_model.h5  # Trained LSTM model (ignored)
+│   ├── weather_scaler.pkl     # Data Scaler (ignored)
+│   └── Predict_plot.png       # Prediction result
 │
 ├── web_dashboard/
 │   ├── index.html
