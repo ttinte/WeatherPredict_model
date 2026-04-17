@@ -26,8 +26,13 @@ AIoT-WEATHER-Station/
 │   ├── lang.js
 │   └── logo.png
 │
-├── esp32_node/
-│   └── main.ino               # ESP32 firmware
+├── firmware/                  # ESP32 firmware (PlatformIO)
+│   ├── include/               # Header files (.h)
+│   ├── lib/                   # External libraries
+│   ├── src/                   # Main source code (.cpp / .ino)
+│   ├── test/                  # Unit tests
+│   ├── .gitignore
+│   └── platformio.ini         # PlatformIO config
 │
 ├── .gitignore
 └── README.md
