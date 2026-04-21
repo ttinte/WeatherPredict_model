@@ -1,7 +1,6 @@
 #Security
 firebase_key.json
 firebase.js
-rawdata.json
 
 .vscode/
 weather_lstm_model.keras
@@ -18,5 +17,6 @@ skills-lock.json
 
 public
 
-raw
+*.csv#
+*.csv
 logs
