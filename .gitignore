@@ -1,6 +1,6 @@
 #Security
 firebase_key.json
-firebase.js
+web_dashboard/config.js
 
 .vscode/
 weather_lstm_model.keras
