@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-file_path = 'rawdata.json'
+file_path = 'raw/rawdata.json'
 print("Đang xử lý data, lấy 1 mẫu mỗi 10 phút và vá lỗi rớt mạng...")
 
 try:
@@ -37,7 +37,7 @@ try:
 
     df_10min = df_10min.reset_index()
 
-    output_file = 'raw/weather_fixed.csv'
+    output_file = 'raw/weather.csv'
     df_10min.to_csv(output_file, index=False)
     
     print(f"Done {len(df_10min)} ")
