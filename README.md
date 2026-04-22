@@ -5,8 +5,8 @@ AIoT-WEATHER-Station/
 │
 ├── ai_server/
 │   ├── server.py              # Flask API server
-│   ├── model.h5               # Trained LSTM model
-│   ├── scaler.pkl             # Data scaler
+│   ├── model.h5               # Trained LSTM model (from WeatherPredictTraining)
+│   ├── scaler.pkl             # Data scaler (from WeatherPredictTraining)
 │   └── requirements.txt       # Python dependencies
 │
 ├── WeatherPredictTraining/
