@@ -23,7 +23,7 @@ API_KEY = os.environ.get("MY_API_KEY")
 # 4. Initialize Firebase Admin SDK
 cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://aiotnhom2-80e7a-default-rtdb.firebaseio.com'
+    'databaseURL': 'https://aiotnhom2-80e7a-default-rtdb.firebaseio.com/'
 })
 
 @app.route("/")
